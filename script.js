@@ -61,18 +61,6 @@ Corsi principali e interessi:
 - Reti di calcolatori: protocolli, cifratura, networking, apparati di rete, CyberSecurity introduttiva`
             },
 
-            'skills.txt': {
-                type: 'file',
-                content: `COMPETENZE
-Linguaggi e scripting:
-- C, C++, JavaScript, Bash
-
-Sicurezza e strumenti:
-- Vulnerability Assessment, OSINT, Ethical Hacking
-- Docker, Wireshark, SentinelOne, Sophos, TrendMicro, Trellix EPO
-- Cloud & Linux, Networking, Security Posture Evaluation`
-            },
-
             'contact.txt': {
                 type: 'file',
                 html: true,
