@@ -9,6 +9,7 @@
     --font: Consolas, monospace;
 }
 
+/* Corpo pagina */
 body {
     margin: 0;
     background: var(--bg);
@@ -19,6 +20,7 @@ body {
     flex-direction: column;
 }
 
+/* Header */
 header {
     padding: 10px;
     border-bottom: 1px solid var(--prompt);
@@ -30,6 +32,8 @@ header {
     font-family: monospace;
     white-space: pre;
     line-height: 1.1;
+    overflow-x: auto;   /* scroll orizzontale se necessario */
+    max-width: 100%;
 }
 
 /* Subtitle testuale */
@@ -49,28 +53,28 @@ header {
 }
 
 /* Linee di output */
-.terminal-line { 
-    white-space: pre-wrap; 
+.terminal-line {
+    white-space: pre-wrap;
 }
 
 /* Stili speciali */
-.error { 
-    color: var(--error); 
+.error {
+    color: var(--error);
 }
 
-.folder { 
-    color: var(--folder); 
+.folder {
+    color: var(--folder);
 }
 
-.file { 
-    color: var(--file); 
+.file {
+    color: var(--file);
 }
 
 /* Input line (prompt + comando) */
 .input-line {
     display: flex;
     align-items: center;
-    gap: 6px;                 /* piccolo spazio tra prompt e input */
+    gap: 6px;
     font-family: var(--font);
     font-size: 1em;
 }
@@ -80,27 +84,71 @@ header {
     color: #ffffff;
     font-weight: bold;
     flex-shrink: 0;
-    padding-right: 4px;        /* separazione più netta dal comando */
+    padding-right: 4px;
 }
 
 /* Input dei comandi */
 input {
     background: transparent;
     border: none;
-    color: var(--text);        /* colore neon dei comandi */
+    color: var(--text);
     outline: none;
     flex-grow: 1;
     font-family: var(--font);
     font-size: 1em;
-    caret-color: var(--text);  /* caret verde neon */
+    caret-color: var(--text);
 }
 
-/* Effetto hover/focus più realistico */
+/* Focus input */
 input:focus {
     outline: none;
 }
 
-/* Spazio extra tra prompt e input */
+/* Prompt spazio extra */
 .input-line span#prompt::after {
     content: ' ';
+}
+
+/* ===== MEDIA QUERIES ===== */
+/* Smartphone */
+@media (max-width: 600px) {
+    .banner {
+        font-size: 0.7em;
+        line-height: 1;
+    }
+    body {
+        font-size: 14px;
+    }
+    #terminal {
+        padding: 5px;
+    }
+    .input-line {
+        gap: 4px;
+    }
+    #prompt {
+        font-size: 0.9em;
+    }
+    input {
+        font-size: 0.9em;
+        padding: 4px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 900px) and (min-width: 601px) {
+    .banner {
+        font-size: 0.85em;
+        line-height: 1.05;
+    }
+    body {
+        font-size: 15px;
+    }
+}
+
+/* Desktop minimo aggiustamento */
+@media (min-width: 901px) {
+    .banner {
+        font-size: 1em;
+        line-height: 1.1;
+    }
 }
