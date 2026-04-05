@@ -34,40 +34,31 @@ Attualmente lavoro come Junior CyberSecurity Engineer presso Mead Informatica.`
 Mead Informatica SRL | Reggio nell'Emilia, Italia
 [07/04/2025 – Attuale] CyberSecurity Engineer
 
-Attività principali:
-- Vulnerability Assessment con Qualys e Rapid7
-- Web Application Security Testing con Qualys e Rapid7
-- Hardening Active Directory e Cloud Security Posture Evaluation
-- Deployment, migrazione e gestione antivirus: SentinelOne, Sophos, TrendMicro, Trellix EPO
-- Threat Intelligence (OSINT) tramite Shodan, Zoomeye e Rapid7 Threat Command
-- Realizzazione e gestione campagne di phishing etico personalizzate
-- Scripting e sviluppo software interno
-- In formazione: assessment dei backup`
+- Vulnerability Assessment
+- Web Application Security Testing
+- Active Directory Hardening
+- Threat Intelligence (OSINT)
+- Ethical Phishing Campaigns`
             },
 
             'education.txt': {
                 type: 'file',
-                content: `ISTRUZIONE E FORMAZIONE
-Università degli Studi di Parma | Parma, Italia
-[19/09/2022 – 24/11/2025] Laurea in Informatica (EQF Livello 6)
-Siti di riferimento: https://www.unipr.it/
+                content: `ISTRUZIONE
+Università degli Studi di Parma
+Laurea in Informatica
 
-Corsi principali e interessi:
-- Basi di dati: MySQL 8.0, PostgreSQL
-- Programmazione: C++, principi OOP (incapsulamento, ereditarietà, polimorfismo, SOLID)
-- Algoritmi e strutture dati: C e C++
-- Ingegneria del software: Git, GitHub, HTML, CSS, JavaScript, PHP, Bootstrap, MySQL, Docker, UML, gestione progetti
-- Sistemi IT e cloud: Linux, Docker, Kubernetes, AWS
-- Reti di calcolatori: protocolli, cifratura, networking, apparati di rete, CyberSecurity introduttiva`
+Focus:
+- Cybersecurity
+- Networking
+- Cloud & Linux`
             },
 
             'contact.txt': {
                 type: 'file',
                 html: true,
                 content: `Email: <a href="mailto:rosati.matteo2001@gmail.com">rosati.matteo2001@gmail.com</a>
-LinkedIn: <a href="https://www.linkedin.com/in/matteo-rosati-a60268326/" target="_blank">linkedin.com/in/matteo-rosati-a60268326</a>`
+LinkedIn: <a href="https://www.linkedin.com" target="_blank">linkedin</a>`
             }
-
         }
     }
 };
@@ -78,33 +69,49 @@ function setPrompt() {
 }
 
 function scrollToBottom() {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+    });
 }
 
-function print(text, className='') {
+/* OUTPUT NORMALE (BIANCO) */
+function print(text, className = '') {
     const line = document.createElement('div');
-    line.className = `terminal-line ${className}`;
+    line.className = `terminal-line ${className} output-line`;
     line.textContent = text;
+
     output.appendChild(line);
-
-    if (output.children.length > MAX_LINES) {
-        output.removeChild(output.firstChild);
-    }
-
+    trimOutput();
     scrollToBottom();
 }
 
+/* OUTPUT HTML (solo controllato da te) */
 function printHTML(html) {
     const line = document.createElement('div');
-    line.className = 'terminal-line';
+    line.className = 'terminal-line output-line';
     line.innerHTML = html;
-    output.appendChild(line);
 
+    output.appendChild(line);
+    trimOutput();
+    scrollToBottom();
+}
+
+/* INPUT UTENTE */
+function printInput(text) {
+    const line = document.createElement('div');
+    line.className = 'terminal-line input-line-text';
+    line.textContent = text;
+
+    output.appendChild(line);
+    trimOutput();
+    scrollToBottom();
+}
+
+function trimOutput() {
     if (output.children.length > MAX_LINES) {
         output.removeChild(output.firstChild);
     }
-
-    scrollToBottom();
 }
 
 function sleep(ms) {
@@ -113,102 +120,84 @@ function sleep(ms) {
 
 /* ================= COMMANDS ================= */
 async function runCommand(inputStr) {
-    const [cmd, ...args] = inputStr.split(/\s+/);
-    const full = inputStr.toLowerCase();
+
+    const raw = inputStr.trim();
+
+    // 🔥 CASE INSENSITIVE
+    const [cmdRaw, ...args] = raw.split(/\s+/);
+    const cmd = cmdRaw.toLowerCase();
+    const full = raw.toLowerCase();
 
     /* ===== FAKE HACKER COMMANDS ===== */
+
     if (full.startsWith('install metasploit')) {
         print('Installing metasploit...');
-        await sleep(1500);
-        print('Downloading... 50%');
-        await sleep(1500);
+        await sleep(1200);
+        print('Downloading... 42%');
+        await sleep(1200);
         print('Downloading... 100%');
-        await sleep(1000);
-        print('Installation complete.');
+        await sleep(800);
+        print('Done.');
         print('');
-        print('Well... installing tools on a fake CLI.');
-        print('Bold move, hAcKeR.');
+        print('Wow.');
+        print('Installing hacking tools on a fake terminal.');
+        print('Elite move.');
         return;
     }
 
     if (cmd === 'ping') {
         const target = args[0] || '8.8.8.8';
-        const time1 = Math.floor(Math.random() * 20) + 30;
-        const time2 = Math.floor(Math.random() * 20) + 30;
-
-        print(`Pinging ${target} with 32 bytes of data...`);
-        await sleep(1000);
-        print(`Reply from ${target}: bytes=32 time=${time1}ms TTL=128`);
+        print(`Pinging ${target}...`);
         await sleep(800);
-        print(`Reply from ${target}: bytes=32 time=${time2}ms TTL=128`);
-        await sleep(800);
+        print(`Reply from ${target}: time=32ms`);
+        await sleep(600);
+        print(`Reply from ${target}: time=29ms`);
+        await sleep(600);
         print('');
-        print('Packets: Sent = 2, Received = 2, Lost = 0 (0% loss)');
-        print('');
-        print('Stable connection.');
-        print('To whatever you just typed.');
-        print('Convincing.');
+        print('Connection stable.');
+        print('Unlike your hacking career.');
         return;
     }
 
     if (cmd === 'hack') {
-        print(`Attempting breach on ${args[0] || 'target'}...`);
-        await sleep(2000);
-        print('Bypassing firewall...');
+        print(`Hacking ${args[0] || 'target'}...`);
         await sleep(1500);
+        print('Bypassing firewall...');
+        await sleep(1000);
         print('Access granted.');
         print('');
-        print('You did it.');
-        print('In a fake environment.');
-        print('Let that sink in.');
+        print('Everything is fake.');
+        print('Including this success.');
         return;
     }
 
     if (full === 'sudo rm -rf /') {
-        print('Executing command...');
+        print('Deleting system...');
         await sleep(1000);
-        print('Deleting /bin');
-        await sleep(800);
-        print('Deleting /etc');
-        await sleep(800);
-        print('Deleting /home');
-        await sleep(1200);
-        print('');
-        print('System destruction complete.');
-        print('');
+        print('...');
+        await sleep(1000);
+        print('...');
+        await sleep(1000);
         print('Relax.');
-        print('Nothing here was real anyway.');
-        return;
-    }
-
-    if (cmd === 'exploit') {
-        print('Launching exploit...');
-        await sleep(1500);
-        print('Injecting payload...');
-        await sleep(1500);
-        print('Executing...');
-        await sleep(1500);
-        print('');
-        print('Operation complete.');
-        print('');
-        print('No systems harmed.');
-        print('Mainly because none exist.');
+        print('Nothing here was real.');
         return;
     }
 
     if (full === 'sudo -i') {
-        print("yeah... you'd like");
+        print("nice try.");
         return;
     }
 
-    /* ===== NORMAL COMMANDS ===== */
-    switch(cmd) {
+    /* ===== REAL COMMANDS ===== */
+
+    switch (cmd) {
+
         case 'help':
         case 'panic':
             print('Available commands:');
             print('help ls pwd cat clear');
             print('');
-            print('Or try to enjoy some other commands if you woke up little hacker this morning');
+            print('Or try something shady...');
             break;
 
         case 'ls': {
@@ -225,7 +214,10 @@ async function runCommand(inputStr) {
             const dir = fs[cwd[0]].contents;
             const file = dir[args[0]];
 
-            if (!file) return print('File not found','error');
+            if (!file) {
+                print('File not found', 'error');
+                return;
+            }
 
             if (file.html) {
                 printHTML(file.content);
@@ -240,22 +232,32 @@ async function runCommand(inputStr) {
             break;
 
         default:
-            print('command not found','error');
+            print('command not found', 'error');
     }
 }
 
 /* ================= INPUT ================= */
 input.addEventListener('keydown', async e => {
-    if (e.key === 'Enter') {
-        const value = input.value.trim();
-        if (!value) return;
-        if (value.length > MAX_INPUT) return print('Input too long','error');
 
-        print(`${promptEl.textContent} ${value}`);
+    if (e.key === 'Enter') {
+
+        const value = input.value.trim();
+
+        if (!value) return;
+        if (value.length > MAX_INPUT) {
+            print('Input too long', 'error');
+            return;
+        }
+
+        // 🔥 INPUT UTENTE IN BIANCO
+        printInput(`${promptEl.textContent} ${value}`);
+
         await runCommand(value);
+
         input.value = '';
     }
 });
 
 /* ================= INIT ================= */
 setPrompt();
+print('Welcome. Type "help" if you are lost.');
