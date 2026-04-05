@@ -20,44 +20,56 @@ const fs = {
 
             'about.txt': {
                 type: 'file',
-                content: `PRESENTAZIONE
+                content: `ABOUT ME
+
 Matteo Rosati
-Junior CyberSecurity Engineer, appassionato di sviluppo software e sicurezza informatica.
-Durante il percorso di laurea in Informatica presso l'Università degli Studi di Parma,
-ho maturato competenze in sviluppo software, sicurezza informatica e OSINT.
-Attualmente lavoro come Junior CyberSecurity Engineer presso Mead Informatica.`
+Junior CyberSecurity Engineer with a strong interest in software development and information security.
+
+During my Bachelor's degree in Computer Science at the University of Parma, I developed skills in:
+- Software development
+- Cybersecurity fundamentals
+- OSINT and threat intelligence
+
+Currently working as a Junior CyberSecurity Engineer at Mead Informatica.`
             },
 
             'experience.txt': {
                 type: 'file',
-                content: `ESPERIENZA LAVORATIVA
-Mead Informatica SRL | Reggio nell'Emilia, Italia
-[07/04/2025 – Attuale] CyberSecurity Engineer
+                content: `WORK EXPERIENCE
 
-- Vulnerability Assessment
+CyberSecurity Engineer — Mead Informatica (2025 - Present)
+
+Main activities:
+- Vulnerability Assessment (Qualys, Rapid7)
 - Web Application Security Testing
 - Active Directory Hardening
+- Cloud Security Posture Evaluation
 - Threat Intelligence (OSINT)
-- Ethical Phishing Campaigns`
+- Ethical phishing campaigns
+- Internal scripting and automation`
             },
 
             'education.txt': {
                 type: 'file',
-                content: `ISTRUZIONE
-Università degli Studi di Parma
-Laurea in Informatica
+                content: `EDUCATION
 
-Focus:
-- Cybersecurity
-- Networking
-- Cloud & Linux`
+Bachelor's Degree in Computer Science
+University of Parma (2022 – 2025)
+
+Key areas:
+- Cybersecurity & Networking
+- Cloud & Linux systems
+- Algorithms & Data Structures
+- Software Engineering`
             },
 
             'contact.txt': {
                 type: 'file',
                 html: true,
-                content: `Email: <a href="mailto:rosati.matteo2001@gmail.com">rosati.matteo2001@gmail.com</a>
-LinkedIn: <a href="https://www.linkedin.com" target="_blank">linkedin</a>`
+                content: `CONTACT
+
+Email: <a href="mailto:rosati.matteo2001@gmail.com">rosati.matteo2001@gmail.com</a>
+LinkedIn: <a href="https://www.linkedin.com" target="_blank">linkedin.com</a>`
             }
         }
     }
@@ -75,7 +87,6 @@ function scrollToBottom() {
     });
 }
 
-/* OUTPUT NORMALE (BIANCO) */
 function print(text, className = '') {
     const line = document.createElement('div');
     line.className = `terminal-line ${className} output-line`;
@@ -86,7 +97,6 @@ function print(text, className = '') {
     scrollToBottom();
 }
 
-/* OUTPUT HTML (solo controllato da te) */
 function printHTML(html) {
     const line = document.createElement('div');
     line.className = 'terminal-line output-line';
@@ -97,7 +107,6 @@ function printHTML(html) {
     scrollToBottom();
 }
 
-/* INPUT UTENTE */
 function printInput(text) {
     const line = document.createElement('div');
     line.className = 'terminal-line input-line-text';
@@ -123,7 +132,6 @@ async function runCommand(inputStr) {
 
     const raw = inputStr.trim();
 
-    // 🔥 CASE INSENSITIVE
     const [cmdRaw, ...args] = raw.split(/\s+/);
     const cmd = cmdRaw.toLowerCase();
     const full = raw.toLowerCase();
@@ -139,9 +147,8 @@ async function runCommand(inputStr) {
         await sleep(800);
         print('Done.');
         print('');
-        print('Wow.');
         print('Installing hacking tools on a fake terminal.');
-        print('Elite move.');
+        print('Bold strategy.');
         return;
     }
 
@@ -155,12 +162,12 @@ async function runCommand(inputStr) {
         await sleep(600);
         print('');
         print('Connection stable.');
-        print('Unlike your hacking career.');
+        print('At least something is.');
         return;
     }
 
     if (cmd === 'hack') {
-        print(`Hacking ${args[0] || 'target'}...`);
+        print(`Attempting breach on ${args[0] || 'target'}...`);
         await sleep(1500);
         print('Bypassing firewall...');
         await sleep(1000);
@@ -184,7 +191,8 @@ async function runCommand(inputStr) {
     }
 
     if (full === 'sudo -i') {
-        print("nice try.");
+        print('Permission denied.');
+        print('Nice try though.');
         return;
     }
 
@@ -194,10 +202,18 @@ async function runCommand(inputStr) {
 
         case 'help':
         case 'panic':
-            print('Available commands:');
-            print('help ls pwd cat clear');
+            print('AVAILABLE COMMANDS:\n');
+
+            print('help / panic   → Show this help menu');
+            print('ls             → List available files');
+            print('pwd            → Show current directory');
+            print('cat <file>     → Display file content');
+            print('clear          → Clear terminal');
+
             print('');
-            print('Or try something shady...');
+            print('Hidden commands exist.');
+            print('Try something... more "offensive".');
+
             break;
 
         case 'ls': {
@@ -244,12 +260,12 @@ input.addEventListener('keydown', async e => {
         const value = input.value.trim();
 
         if (!value) return;
+
         if (value.length > MAX_INPUT) {
             print('Input too long', 'error');
             return;
         }
 
-        // 🔥 INPUT UTENTE IN BIANCO
         printInput(`${promptEl.textContent} ${value}`);
 
         await runCommand(value);
@@ -260,3 +276,4 @@ input.addEventListener('keydown', async e => {
 
 /* ================= INIT ================= */
 setPrompt();
+print('Welcome. Type "help" if you feel lost.');
