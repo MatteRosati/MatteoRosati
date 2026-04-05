@@ -1,15 +1,13 @@
 :root {
-    --bg: #0c0c0c;          /* sfondo del terminale */
-    --text: #00e600;        /* colore dei comandi */
-    --error: #ff4444;       /* messaggi di errore */
-    --folder: #4da6ff;      /* cartelle */
-    --file: #33ccff;        /* file */
-    --prompt: #009900;      /* colore prompt */
-    --banner: #ffffff;      /* colore ASCII banner */
+    --bg: #0c0c0c;
+    --text: #00e600;
+    --output: #e6e6e6;
+    --error: #ff4444;
+    --prompt: #009900;
+    --banner: #ffffff;
     --font: Consolas, monospace;
 }
 
-/* Corpo pagina */
 body {
     margin: 0;
     background: var(--bg);
@@ -20,135 +18,66 @@ body {
     flex-direction: column;
 }
 
-/* Header */
 header {
     padding: 10px;
     border-bottom: 1px solid var(--prompt);
 }
 
-/* Banner ASCII */
 .banner {
     color: var(--banner);
-    font-family: monospace;
     white-space: pre;
-    line-height: 1.1;
-    overflow-x: auto;   /* scroll orizzontale se necessario */
-    max-width: 100%;
+    overflow-x: auto;
 }
 
-/* Subtitle testuale */
 .subtitle {
-    color: var(--text);
     margin-top: 10px;
 }
 
-/* Terminal container */
+/* TERMINALE */
 #terminal {
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
 }
 
-/* Linee di output */
-.terminal-line {
-    white-space: pre-wrap;
+/* OUTPUT */
+.output {
+    color: var(--output);
 }
 
-/* Stili speciali */
+/* COMANDI UTENTE */
+.command {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* ERRORI */
 .error {
     color: var(--error);
 }
 
-.folder {
-    color: var(--folder);
-}
-
-.file {
-    color: var(--file);
-}
-
-/* Input line (prompt + comando) */
+/* INPUT */
 .input-line {
     display: flex;
-    align-items: center;
     gap: 6px;
-    font-family: var(--font);
-    font-size: 1em;
 }
 
-/* Prompt */
 #prompt {
-    color: #ffffff;
+    color: var(--prompt);
     font-weight: bold;
-    flex-shrink: 0;
-    padding-right: 4px;
 }
 
-/* Input dei comandi */
 input {
     background: transparent;
     border: none;
-    color: var(--text);
+    color: #ffffff;
     outline: none;
     flex-grow: 1;
     font-family: var(--font);
-    font-size: 1em;
-    caret-color: var(--text);
 }
 
-/* Focus input */
-input:focus {
-    outline: none;
-}
-
-/* Prompt spazio extra */
-.input-line span#prompt::after {
-    content: ' ';
-}
-
-/* ===== MEDIA QUERIES ===== */
-/* Smartphone */
+/* MOBILE */
 @media (max-width: 600px) {
-    .banner {
-        font-size: 0.7em;
-        line-height: 1;
-    }
-    body {
-        font-size: 14px;
-    }
-    #terminal {
-        padding: 5px;
-    }
-    .input-line {
-        gap: 4px;
-    }
-    #prompt {
-        font-size: 0.9em;
-    }
-    input {
-        font-size: 0.9em;
-        padding: 4px;
-    }
-}
-
-/* Tablet */
-@media (max-width: 900px) and (min-width: 601px) {
-    .banner {
-        font-size: 0.85em;
-        line-height: 1.05;
-    }
-    body {
-        font-size: 15px;
-    }
-}
-
-/* Desktop minimo aggiustamento */
-@media (min-width: 901px) {
-    .banner {
-        font-size: 1em;
-        line-height: 1.1;
-    }
+    body { font-size: 14px; }
+    .banner { font-size: 0.7em; }
 }
