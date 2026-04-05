@@ -89,6 +89,12 @@ function scrollToBottom() {
 
 function print(text, className = '') {
     const line = document.createElement('div');
+
+    // evidenzia titoli (tutto maiuscolo)
+    if (text === text.toUpperCase() && text.trim() !== '' && text.length > 3) {
+        className += ' title-line';
+    }
+
     line.className = `terminal-line ${className} output-line`;
     line.textContent = text;
 
@@ -130,6 +136,8 @@ function sleep(ms) {
 /* ================= COMMANDS ================= */
 async function runCommand(inputStr) {
 
+    print(''); // spazio prima
+
     const raw = inputStr.trim();
 
     const [cmdRaw, ...args] = raw.split(/\s+/);
@@ -149,6 +157,7 @@ async function runCommand(inputStr) {
         print('');
         print('Installing hacking tools on a fake terminal.');
         print('Bold strategy.');
+        print('');
         return;
     }
 
@@ -163,6 +172,7 @@ async function runCommand(inputStr) {
         print('');
         print('Connection stable.');
         print('At least something is.');
+        print('');
         return;
     }
 
@@ -175,6 +185,7 @@ async function runCommand(inputStr) {
         print('');
         print('Everything is fake.');
         print('Including this success.');
+        print('');
         return;
     }
 
@@ -187,12 +198,14 @@ async function runCommand(inputStr) {
         await sleep(1000);
         print('Relax.');
         print('Nothing here was real.');
+        print('');
         return;
     }
 
     if (full === 'sudo -i') {
         print('Permission denied.');
         print('Nice try though.');
+        print('');
         return;
     }
 
@@ -213,12 +226,11 @@ async function runCommand(inputStr) {
             print('');
             print('Hidden commands exist.');
             print('Try something... more "offensive".');
-
             break;
 
         case 'ls': {
             const dir = fs[cwd[0]].contents;
-            Object.keys(dir).forEach(n => print(n));
+            Object.keys(dir).forEach(n => print(`- ${n}`));
             break;
         }
 
@@ -238,7 +250,14 @@ async function runCommand(inputStr) {
             if (file.html) {
                 printHTML(file.content);
             } else {
-                print(file.content);
+                file.content.split('\n').forEach(line => {
+                    print(line);
+
+                    // spazio dopo titoli
+                    if (line === line.toUpperCase() && line.trim() !== '') {
+                        print('');
+                    }
+                });
             }
             break;
         }
@@ -250,6 +269,8 @@ async function runCommand(inputStr) {
         default:
             print('command not found', 'error');
     }
+
+    print(''); // spazio dopo
 }
 
 /* ================= INPUT ================= */
@@ -266,13 +287,9 @@ input.addEventListener('keydown', async e => {
             return;
         }
 
-        print('');
-
         printInput(`${promptEl.textContent} ${value}`);
 
         await runCommand(value);
-
-        print('');
 
         input.value = '';
     }
