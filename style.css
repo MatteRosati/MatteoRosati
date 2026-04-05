@@ -5,9 +5,12 @@
     --error: #ff4444;
     --prompt: #009900;
     --banner: #ffffff;
+    --title: #00ffcc;
+
     --font: Consolas, monospace;
 }
 
+/* ================= BASE ================= */
 body {
     margin: 0;
     background: var(--bg);
@@ -18,6 +21,7 @@ body {
     flex-direction: column;
 }
 
+/* ================= HEADER ================= */
 header {
     padding: 10px;
     border-bottom: 1px solid var(--prompt);
@@ -31,23 +35,37 @@ header {
 
 .subtitle {
     margin-top: 10px;
+    opacity: 0.8;
 }
 
-/* TERMINALE */
+/* ================= TERMINAL ================= */
 #terminal {
     flex-grow: 1;
-    padding: 10px;
+    padding: 12px;
     overflow-y: auto;
 }
 
+/* ================= LINEE ================= */
+.terminal-line {
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 /* OUTPUT */
-.output {
+.output-line {
     color: var(--output);
 }
 
-/* COMANDI UTENTE */
-.command {
+/* INPUT UTENTE */
+.input-line-text {
     color: #ffffff;
+    font-weight: bold;
+}
+
+/* PROMPT */
+#prompt {
+    color: var(--prompt);
     font-weight: bold;
 }
 
@@ -56,15 +74,23 @@ header {
     color: var(--error);
 }
 
-/* INPUT */
+/* TITOLI (ABOUT ME, EDUCATION, ecc.) */
+.title-line {
+    color: var(--title);
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 2px;
+}
+
+/* ================= LISTE (ls) ================= */
+.output-line::marker {
+    color: var(--text);
+}
+
+/* ================= INPUT ================= */
 .input-line {
     display: flex;
     gap: 6px;
-}
-
-#prompt {
-    color: var(--prompt);
-    font-weight: bold;
 }
 
 input {
@@ -74,10 +100,33 @@ input {
     outline: none;
     flex-grow: 1;
     font-family: var(--font);
+    font-size: inherit;
 }
 
-/* MOBILE */
+/* ================= SCROLLBAR (bella da vedere) ================= */
+#terminal::-webkit-scrollbar {
+    width: 6px;
+}
+
+#terminal::-webkit-scrollbar-thumb {
+    background: #1f1f1f;
+}
+
+#terminal::-webkit-scrollbar-thumb:hover {
+    background: #333;
+}
+
+/* ================= MOBILE ================= */
 @media (max-width: 600px) {
-    body { font-size: 14px; }
-    .banner { font-size: 0.7em; }
+    body {
+        font-size: 14px;
+    }
+
+    .banner {
+        font-size: 0.7em;
+    }
+
+    #terminal {
+        padding: 8px;
+    }
 }
