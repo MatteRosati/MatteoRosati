@@ -266,9 +266,13 @@ input.addEventListener('keydown', async e => {
             return;
         }
 
+        print('');
+
         printInput(`${promptEl.textContent} ${value}`);
 
         await runCommand(value);
+
+        print('');
 
         input.value = '';
     }
