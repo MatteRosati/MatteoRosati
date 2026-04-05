@@ -260,4 +260,3 @@ input.addEventListener('keydown', async e => {
 
 /* ================= INIT ================= */
 setPrompt();
-print('Welcome. Type "help" if you are lost.');
