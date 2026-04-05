@@ -224,8 +224,7 @@ async function runCommand(inputStr) {
             print('clear          → Clear terminal');
 
             print('');
-            print('Hidden commands exist.');
-            print('Try something... more "offensive".');
+            print('Maybe some easter eggs exist, have fun');
             break;
 
         case 'ls': {
