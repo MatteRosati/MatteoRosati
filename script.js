@@ -23,21 +23,27 @@ const fs = {
                 content: `ABOUT ME
 
 Matteo Rosati
-Junior CyberSecurity Engineer with a strong interest in software development and information security.
+Junior CyberSecurity Engineer with a strong interest in software development and Cybersecurity.
 
 During my Bachelor's degree in Computer Science at the University of Parma, I developed skills in:
-- Software development
+- Software engineering
 - Cybersecurity fundamentals
 - OSINT and threat intelligence
 
-Currently working as a Junior CyberSecurity Engineer at Mead Informatica.`
+Currently I'm working as a Junior CyberSecurity Engineer at Mead Informatica.`
             },
 
             'experience.txt': {
                 type: 'file',
                 content: `WORK EXPERIENCE
 
-CyberSecurity Engineer — Mead Informatica (2025 - Present)
+[february 2025 - april 2025]
+Internship in Cybersecurity Delivery division - Mead Informatica
+
+Project: Design and Development of a OSINT data collection solution
+
+[april 2025 - now]
+CyberSecurity Engineer — Mead Informatica
 
 Main activities:
 - Vulnerability Assessment (Qualys, Rapid7)
