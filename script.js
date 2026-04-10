@@ -152,7 +152,7 @@ async function runCommand(inputStr) {
 
     /* ===== FAKE HACKER COMMANDS ===== */
 
-    if (full.startsWith('install metasploit')) {
+    if (full.startsWith('pip install metasploit')) {
         print('Installing metasploit...');
         await sleep(1200);
         print('Downloading... 42%');
@@ -182,19 +182,6 @@ async function runCommand(inputStr) {
         return;
     }
 
-    if (cmd === 'hack') {
-        print(`Attempting breach on ${args[0] || 'target'}...`);
-        await sleep(1500);
-        print('Bypassing firewall...');
-        await sleep(1000);
-        print('Access granted.');
-        print('');
-        print('Everything is fake.');
-        print('Including this success.');
-        print('');
-        return;
-    }
-
     if (full === 'sudo rm -rf /') {
         print('Deleting system...');
         await sleep(1000);
@@ -202,15 +189,20 @@ async function runCommand(inputStr) {
         await sleep(1000);
         print('...');
         await sleep(1000);
-        print('Relax.');
-        print('Nothing here was real.');
+        print('Good try... if only it was real');
         print('');
         return;
     }
 
     if (full === 'sudo -i') {
-        print('Permission denied.');
-        print('Nice try though.');
+        print('Giving sudo Permissions');
+        await sleep(1000);
+        print('Maybe...');
+        for (let i = 0; i < 10; i++) {
+            print('...');
+            await sleep(500);            
+        }
+        print('Maybe not to you.');
         print('');
         return;
     }
@@ -219,8 +211,7 @@ async function runCommand(inputStr) {
 
     switch (cmd) {
 
-        case 'help':
-        case 'panic':
+        case 'help': {
             print('AVAILABLE COMMANDS:\n');
 
             print('help / panic   → Show this help menu');
@@ -232,6 +223,23 @@ async function runCommand(inputStr) {
             print('');
             print('Maybe some easter eggs exist, have fun');
             break;
+        }
+
+        case 'panic': {
+            print('Well... Understandable. Hope this can help.\n');
+            print('AVAILABLE COMMANDS:\n');
+
+            print('help / panic   → Show this help menu');
+            print('ls             → List available files');
+            print('pwd            → Show current directory');
+            print('cat <file>     → Display file content');
+            print('clear          → Clear terminal');
+
+            print('');
+            print('Maybe some easter eggs exist, have fun');
+            break;
+        }
+        
 
         case 'ls': {
             const dir = fs[cwd[0]].contents;
