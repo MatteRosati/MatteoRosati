@@ -96,7 +96,6 @@ function scrollToBottom() {
 function print(text, className = '') {
     const line = document.createElement('div');
 
-    // evidenzia titoli (tutto maiuscolo)
     if (text === text.toUpperCase() && text.trim() !== '' && text.length > 3) {
         className += ' title-line';
     }
@@ -142,42 +141,73 @@ function sleep(ms) {
 /* ================= COMMANDS ================= */
 async function runCommand(inputStr) {
 
-    print(''); // spazio prima
+    print('');
 
     const raw = inputStr.trim();
-
     const [cmdRaw, ...args] = raw.split(/\s+/);
     const cmd = cmdRaw.toLowerCase();
     const full = raw.toLowerCase();
 
     /* ===== FAKE HACKER COMMANDS ===== */
 
-    if (full.startsWith('pip install metasploit')) {
-        print('Installing metasploit...');
-        await sleep(1200);
-        print('Downloading... 42%');
-        await sleep(1200);
-        print('Downloading... 100%');
-        await sleep(800);
-        print('Done.');
+    // pip install dinamico
+    if (cmd === 'pip' && args[0] === 'install') {
+        const pkg = args[1];
+
+        if (!pkg) {
+            print('Usage: pip install <package>', 'error');
+            return;
+        }
+
+        const version = `${Math.floor(Math.random()*5)+1}.${Math.floor(Math.random()*10)}.${Math.floor(Math.random()*10)}`;
+
+        print(`Collecting ${pkg}...`);
+        await sleep(2000);
+
+        print(`Downloading ${pkg}-${version}.tar.gz`);
+        await sleep(4000);
+
+        print(`Installing collected packages: ${pkg}`);
+        await sleep(4000);
+
+        print(`Successfully installed ${pkg}-${version}`);
         print('');
-        print('Installing hacking tools on a fake terminal.');
-        print('Bold strategy.');
+
+        const jokes = [
+            'The software you installed is useful, this website to run it... maybe not',
+            'Successfully wasted: 10 sec ',
+        ];
+
+        print(`You just installed ${pkg}.`);
+        print(jokes[Math.floor(Math.random() * jokes.length)]);
         print('');
         return;
     }
 
+    // ping dinamico
     if (cmd === 'ping') {
-        const target = args[0] || '8.8.8.8';
-        print(`Pinging ${target}...`);
-        await sleep(800);
-        print(`Reply from ${target}: time=32ms`);
-        await sleep(600);
-        print(`Reply from ${target}: time=29ms`);
-        await sleep(600);
+        const target = args[0];
+
+        if (!target) {
+            print('Usage: ping <host>', 'error');
+            return;
+        }
+
+        print(`PING ${target}: 56 data bytes`);
+
+        for (let i = 0; i < 4; i++) {
+            await sleep(500);
+            const time = Math.floor(Math.random() * 50) + 10;
+            print(`64 bytes from ${target}: time=${time}ms`);
+        }
+
         print('');
-        print('Connection stable.');
-        print('At least something is.');
+        print(`--- ${target} ping statistics ---`);
+        print(`4 packets transmitted, 4 received, 0% packet loss`);
+
+        print('');
+        print('Connection looks solid.');
+        print('At least something is...');
         print('');
         return;
     }
@@ -189,7 +219,7 @@ async function runCommand(inputStr) {
         await sleep(1000);
         print('...');
         await sleep(1000);
-        print('Good try... if only it was real');
+        print('Good try... consider using it on your hacking skills instead.');
         print('');
         return;
     }
@@ -207,39 +237,166 @@ async function runCommand(inputStr) {
         return;
     }
 
+        // nmap fake
+    if (cmd === 'nmap') {
+        const target = args[0];
+
+        if (!target) {
+            print('Usage: nmap <target>', 'error');
+            return;
+        }
+
+        print(`Starting Nmap scan against ${target}...`);
+        await sleep(5000);
+
+        print('Scanning ports...');
+        await sleep(10000);
+
+        const ports = [22, 80, 443, 8080];
+        ports.forEach(p => {
+            const isOpen = Math.random() > 0.3;
+            print(`${p}/tcp ${isOpen ? 'open' : 'closed'} service`);
+        });
+
+        print('');
+        print('Nmap scan complete.');
+
+        const jokes = [
+            'Nmap from a fake terminal is a good idea... as is knowing what you are doing.',
+            'Good try, hacker.'
+        ];
+
+        print(jokes[Math.floor(Math.random() * jokes.length)]);
+        print('');
+        return;
+    }
+
+    // whois fake
+    if (cmd === 'whois') {
+        const domain = args[0];
+
+        if (!domain) {
+            print('Usage: whois <domain>', 'error');
+            return;
+        }
+
+        print(`Querying WHOIS database for ${domain}...`);
+        await sleep(2000);
+
+        print(`Domain Name: ${domain}`);
+        print('Registrar: Registrar Inc.');
+        print('Creation Date: 2025-04-12');
+        print('Expiry Date: 2030-04-12');
+        print(`Name Servers: ns1.${domain}.net, ns2.${domain}.net`);
+
+        print('');
+        print('WHOIS lookup complete.');
+
+        const jokes = [
+            'If you ended up here, you wasted your time. Well done.',
+            'Next step: forget everything you just saw.'
+        ];
+
+        print(jokes[Math.floor(Math.random() * jokes.length)]);
+        print('');
+        return;
+    }
+
+    // nslookup fake
+    if (cmd === 'nslookup') {
+        const domain = args[0];
+
+        if (!domain) {
+            print('Usage: nslookup <domain>', 'error');
+            return;
+        }
+
+        print(`Server: 8.8.8.8`);
+        print(`Address: 8.8.8.8#53`);
+        print('');
+        await sleep(1000);
+
+        const fakeIP = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+
+        print(`Name: ${domain}`);
+        print(`Address: ${fakeIP}`);
+
+        print('');
+        print('DNS resolution complete.');
+
+        const jokes = [
+            'Well done: NSlookup from a fake CLI. HaCkEr.',
+            'Next step: pretend you know what to do with these info.'
+        ];
+
+        print(jokes[Math.floor(Math.random() * jokes.length)]);
+        print('');
+        return;
+    }
+
+    // ssh fake
+    if (cmd === 'ssh') {
+        const target = args[0];
+
+        if (!target) {
+            print('Usage: ssh user@host', 'error');
+            return;
+        }
+
+        print(`Connecting to ${target}...`);
+        await sleep(1000);
+
+        print(`Authenticating to ${target}......`);
+        await sleep(1200);
+
+        const success = Math.random() > 0.7;
+
+        if (success) {
+            print('Access granted.');
+            print(`Welcome to ${target}`);
+            print('');
+            await sleep(500);
+            print('you can still use the terminal to move on my website.');
+        } else {
+            print('Permission denied (publickey,password).');
+            print('');
+            print(`Impossible to connect to ${target}: wrong password`);
+            await sleep(500);
+            print('Maybe try to use a real terminal');
+        }
+
+        print('');
+        return;
+    }
+
     /* ===== REAL COMMANDS ===== */
 
     switch (cmd) {
 
         case 'help': {
             print('AVAILABLE COMMANDS:\n');
-
             print('help / panic   → Show this help menu');
             print('ls             → List available files');
             print('pwd            → Show current directory');
             print('cat <file>     → Display file content');
             print('clear          → Clear terminal');
-
             print('');
-            print('Maybe some easter eggs exist, have fun');
+            print('Maybe some easter eggs exist, have fun little hacker');
             break;
         }
 
         case 'panic': {
-            print('Well... Understandable. Hope this can help.\n');
+            print('Understandable...\n')
             print('AVAILABLE COMMANDS:\n');
-
             print('help / panic   → Show this help menu');
             print('ls             → List available files');
             print('pwd            → Show current directory');
             print('cat <file>     → Display file content');
             print('clear          → Clear terminal');
-
             print('');
-            print('Maybe some easter eggs exist, have fun');
+            print('Maybe some easter eggs exist, have fun little hacker');
             break;
         }
-        
 
         case 'ls': {
             const dir = fs[cwd[0]].contents;
@@ -265,8 +422,6 @@ async function runCommand(inputStr) {
             } else {
                 file.content.split('\n').forEach(line => {
                     print(line);
-
-                    // spazio dopo titoli
                     if (line === line.toUpperCase() && line.trim() !== '') {
                         print('');
                     }
@@ -283,7 +438,7 @@ async function runCommand(inputStr) {
             print('command not found', 'error');
     }
 
-    print(''); // spazio dopo
+    print('');
 }
 
 /* ================= INPUT ================= */
