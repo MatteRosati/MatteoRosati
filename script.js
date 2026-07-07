@@ -12,6 +12,42 @@ const HOST = 'home';
 
 let cwd = ['~'];
 
+const MAX_HISTORY = 100;
+const sessionStartedAt = Date.now();
+
+let commandHistory = [];
+let historyIndex = 0;
+let historyDraft = '';
+let commandRunning = false;
+
+const AVAILABLE_COMMANDS = [
+    'help',
+    'panic',
+    'ls',
+    'pwd',
+    'cat',
+    'clear',
+    'history',
+    'whoami',
+    'hostname',
+    'date',
+    'uptime',
+    'uname',
+    'echo',
+    'neofetch',
+    'man',
+    'cd',
+    'exit',
+    'pip',
+    'ping',
+    'nmap',
+    'whois',
+    'nslookup',
+    'ssh',
+    'sudo'
+];
+
+
 /* ================= FILESYSTEM ================= */
 const fs = {
     '~': {
@@ -136,6 +172,188 @@ function trimOutput() {
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function currentDirectoryEntries() {
+    const dir = fs[cwd[0]];
+    return dir && dir.contents ? Object.keys(dir.contents) : [];
+}
+
+function resetHistoryNavigation() {
+    historyIndex = commandHistory.length;
+    historyDraft = '';
+}
+
+function addToHistory(command) {
+    if (!command) return;
+
+    commandHistory.push(command);
+
+    if (commandHistory.length > MAX_HISTORY) {
+        commandHistory.shift();
+    }
+
+    resetHistoryNavigation();
+}
+
+function navigateHistory(direction) {
+    if (!commandHistory.length) return;
+
+    if (direction < 0) {
+        if (historyIndex === commandHistory.length) {
+            historyDraft = input.value;
+        }
+
+        historyIndex = Math.max(0, historyIndex - 1);
+        input.value = commandHistory[historyIndex];
+    } else {
+        if (historyIndex < commandHistory.length - 1) {
+            historyIndex += 1;
+            input.value = commandHistory[historyIndex];
+        } else {
+            historyIndex = commandHistory.length;
+            input.value = historyDraft;
+        }
+    }
+
+    requestAnimationFrame(() => {
+        input.setSelectionRange(input.value.length, input.value.length);
+    });
+}
+
+function longestCommonPrefix(values) {
+    if (!values.length) return '';
+
+    let prefix = values[0];
+
+    for (let i = 1; i < values.length; i++) {
+        while (prefix && !values[i].startsWith(prefix)) {
+            prefix = prefix.slice(0, -1);
+        }
+
+        if (!prefix) break;
+    }
+
+    return prefix;
+}
+
+function completionContext(value) {
+    const leadingWhitespace = (value.match(/^\s*/) || [''])[0];
+    const body = value.slice(leadingWhitespace.length);
+    const endsWithSpace = /\s$/.test(body);
+    const tokens = body.trim() ? body.trim().split(/\s+/) : [];
+
+    if (!tokens.length) {
+        return {
+            candidates: AVAILABLE_COMMANDS,
+            prefix: '',
+            tokenStart: value.length
+        };
+    }
+
+    if (tokens.length === 1 && !endsWithSpace) {
+        const prefix = tokens[0];
+
+        return {
+            candidates: AVAILABLE_COMMANDS.filter(command => command.startsWith(prefix.toLowerCase())),
+            prefix,
+            tokenStart: leadingWhitespace.length
+        };
+    }
+
+    const command = tokens[0].toLowerCase();
+    const prefix = endsWithSpace ? '' : tokens[tokens.length - 1];
+    const tokenStart = endsWithSpace ? value.length : value.length - prefix.length;
+
+    if (command === 'cat') {
+        return {
+            candidates: currentDirectoryEntries().filter(name => name.startsWith(prefix)),
+            prefix,
+            tokenStart
+        };
+    }
+
+    if (command === 'man') {
+        return {
+            candidates: AVAILABLE_COMMANDS.filter(name => name.startsWith(prefix.toLowerCase())),
+            prefix,
+            tokenStart
+        };
+    }
+
+    if (command === 'cd') {
+        const dirs = ['~', '.', '..'];
+
+        return {
+            candidates: dirs.filter(name => name.startsWith(prefix)),
+            prefix,
+            tokenStart
+        };
+    }
+
+    return {
+        candidates: [],
+        prefix,
+        tokenStart
+    };
+}
+
+function autocompleteInput() {
+    const value = input.value;
+    const context = completionContext(value);
+    const candidates = context.candidates;
+
+    if (!candidates.length) return;
+
+    const before = value.slice(0, context.tokenStart);
+    const after = value.slice(context.tokenStart + context.prefix.length);
+
+    if (candidates.length === 1) {
+        const completed = candidates[0];
+        const isFirstToken = context.tokenStart === (value.match(/^\s*/) || [''])[0].length;
+        const suffix = isFirstToken && !after ? ' ' : '';
+
+        input.value = before + completed + suffix + after;
+
+        requestAnimationFrame(() => {
+            const caret = (before + completed + suffix).length;
+            input.setSelectionRange(caret, caret);
+        });
+
+        return;
+    }
+
+    const commonPrefix = longestCommonPrefix(candidates);
+
+    if (commonPrefix.length > context.prefix.length) {
+        input.value = before + commonPrefix + after;
+
+        requestAnimationFrame(() => {
+            const caret = (before + commonPrefix).length;
+            input.setSelectionRange(caret, caret);
+        });
+
+        return;
+    }
+
+    printInput(`${promptEl.textContent} ${value}`);
+    print(candidates.join('    '));
+}
+
+function formatSessionUptime() {
+    const totalSeconds = Math.max(1, Math.floor((Date.now() - sessionStartedAt) / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    if (hours > 0) {
+        return `${hours} hour${hours === 1 ? '' : 's'}, ${minutes} min`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes} min`;
+    }
+
+    return `${totalSeconds} sec`;
 }
 
 /* ================= COMMANDS ================= */
@@ -371,6 +589,15 @@ async function runCommand(inputStr) {
 
     /* ===== REAL COMMANDS ===== */
 
+    // Classic sudo behaviour for everything not already handled above.
+    if (cmd === 'sudo') {
+        print(`${USER} is not in the sudoers file. This incident will be reported.`, 'error');
+        await sleep(600);
+        print('Incident report status: immediately forgotten.');
+        print('');
+        return;
+    }
+
     switch (cmd) {
 
         case 'help': {
@@ -379,7 +606,18 @@ async function runCommand(inputStr) {
             print('ls             → List available files');
             print('pwd            → Show current directory');
             print('cat <file>     → Display file content');
+            print('history        → Show previously used commands');
+            print('whoami         → Show the current user');
+            print('hostname       → Show the host name');
+            print('date           → Show current date and time');
+            print('uptime         → Show terminal session uptime');
+            print('uname -a       → Show fake-but-believable system info');
+            print('echo <text>    → Print text');
+            print('neofetch       → Absolutely essential system information');
+            print('man <command>  → Show a tiny manual page');
             print('clear          → Clear terminal');
+            print('');
+            print('Keyboard: TAB autocomplete · ↑/↓ history · Ctrl+L clear · Ctrl+C cancel line · Ctrl+U clear line');
             print('');
             print('Maybe some easter eggs exist, have fun little hacker');
             break;
@@ -392,11 +630,144 @@ async function runCommand(inputStr) {
             print('ls             → List available files');
             print('pwd            → Show current directory');
             print('cat <file>     → Display file content');
+            print('history        → Show previously used commands');
+            print('whoami         → Show the current user');
+            print('hostname       → Show the host name');
+            print('date           → Show current date and time');
+            print('uptime         → Show terminal session uptime');
+            print('uname -a       → Show fake-but-believable system info');
+            print('echo <text>    → Print text');
+            print('neofetch       → Absolutely essential system information');
+            print('man <command>  → Show a tiny manual page');
             print('clear          → Clear terminal');
+            print('');
+            print('Keyboard: TAB autocomplete · ↑/↓ history · Ctrl+L clear · Ctrl+C cancel line · Ctrl+U clear line');
             print('');
             print('Maybe some easter eggs exist, have fun little hacker');
             break;
         }
+
+        case 'history': {
+            if (args[0] === '-c') {
+                commandHistory = [];
+                resetHistoryNavigation();
+                print('History cleared. Plausible deniability restored.');
+                break;
+            }
+
+            commandHistory.forEach((entry, index) => {
+                print(`${String(index + 1).padStart(4, ' ')}  ${entry}`);
+            });
+            break;
+        }
+
+        case 'whoami':
+            print(USER);
+            break;
+
+        case 'hostname':
+            print(HOST);
+            break;
+
+        case 'date':
+            print(new Date().toString());
+            break;
+
+        case 'uptime': {
+            const load1 = (Math.random() * 0.20 + 0.01).toFixed(2);
+            const load5 = (Math.random() * 0.20 + 0.01).toFixed(2);
+            const load15 = (Math.random() * 0.20 + 0.01).toFixed(2);
+
+            print(` ${new Date().toLocaleTimeString()} up ${formatSessionUptime()}, 1 user, load average: ${load1}, ${load5}, ${load15}`);
+            print('System healthy. Coffee dependency not monitored.');
+            break;
+        }
+
+        case 'uname':
+            if (args.includes('-a')) {
+                print(`Linux ${HOST} 6.8.0-terminal #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux`);
+            } else {
+                print('Linux');
+            }
+            break;
+
+        case 'echo':
+            print(args.join(' '));
+            break;
+
+        case 'neofetch': {
+            print('        .--.');
+            print('       |o_o |');
+            print('       |:_/ |');
+            print('      //   \\ \\');
+            print('     (|     | )');
+            print('    /\'_   _/`\\');
+            print('    \\___)=(___/');
+            print('');
+            print(`${USER}@${HOST}`);
+            print('------------');
+            print('OS: Portfolio Linux');
+            print('Host: Browser tab');
+            print('Kernel: 6.8.0-definitely-real');
+            print('Shell: javascript');
+            print(`Uptime: ${formatSessionUptime()}`);
+            print('Packages: enough');
+            print('CPU: your device is doing all the work');
+            print('Security: optimism-based');
+            break;
+        }
+
+        case 'man': {
+            const topic = (args[0] || '').toLowerCase();
+
+            const pages = {
+                help: 'help - display the commands you probably should have read first',
+                ls: 'ls - list files in the current directory',
+                pwd: 'pwd - print the current working directory',
+                cat: 'cat <file> - print a file to the terminal',
+                history: 'history [-c] - show command history; -c clears the evidence',
+                clear: 'clear - clear terminal output',
+                ping: 'ping <host> - send four extremely convincing fake packets',
+                nmap: 'nmap <target> - simulate a port scan without alarming the SOC',
+                ssh: 'ssh user@host - simulate a remote login attempt',
+                neofetch: 'neofetch - consume screen space in the traditional Linux way',
+                sudo: 'sudo - request privileges and receive emotional damage'
+            };
+
+            if (!topic) {
+                print('What manual page do you want?', 'error');
+            } else if (pages[topic]) {
+                print(pages[topic]);
+            } else {
+                print(`No manual entry for ${topic}. Even this fake OS has limits.`, 'error');
+            }
+
+            break;
+        }
+
+        case 'cd': {
+            const target = args[0];
+
+            if (!target || target === '~' || target === '.') {
+                cwd = ['~'];
+                setPrompt();
+                break;
+            }
+
+            if (target === '..') {
+                print('You are already at the top of this tiny universe.');
+                break;
+            }
+
+            print(`bash: cd: ${target}: No such file or directory`, 'error');
+            break;
+        }
+
+        case 'exit':
+            print('logout');
+            await sleep(350);
+            print('Nice try. This terminal lives in the page.');
+            break;
 
         case 'ls': {
             const dir = fs[cwd[0]].contents;
@@ -444,7 +815,54 @@ async function runCommand(inputStr) {
 /* ================= INPUT ================= */
 input.addEventListener('keydown', async e => {
 
+    if (e.key === 'Tab') {
+        e.preventDefault();
+        autocompleteInput();
+        return;
+    }
+
+    if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        navigateHistory(-1);
+        return;
+    }
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        navigateHistory(1);
+        return;
+    }
+
+    if (e.ctrlKey && e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        output.innerHTML = '';
+        return;
+    }
+
+    if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+        e.preventDefault();
+        input.value = '';
+        return;
+    }
+
+    if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+
+        if (input.value) {
+            printInput(`${promptEl.textContent} ${input.value}^C`);
+        } else {
+            printInput(`${promptEl.textContent} ^C`);
+        }
+
+        input.value = '';
+        resetHistoryNavigation();
+        return;
+    }
+
     if (e.key === 'Enter') {
+        e.preventDefault();
+
+        if (commandRunning) return;
 
         const value = input.value.trim();
 
@@ -455,13 +873,24 @@ input.addEventListener('keydown', async e => {
             return;
         }
 
+        addToHistory(value);
         printInput(`${promptEl.textContent} ${value}`);
 
-        await runCommand(value);
-
         input.value = '';
+        commandRunning = true;
+        input.readOnly = true;
+
+        try {
+            await runCommand(value);
+        } finally {
+            commandRunning = false;
+            input.readOnly = false;
+            resetHistoryNavigation();
+            input.focus();
+        }
     }
 });
 
 /* ================= INIT ================= */
 setPrompt();
+input.focus();
