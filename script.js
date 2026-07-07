@@ -82,12 +82,15 @@ Project: Design and Development of a OSINT data collection solution
 CyberSecurity Engineer — Mead Informatica
 
 Main activities:
-- Vulnerability Assessment (Qualys, Rapid7)
-- Web Application Security Testing
+- EDR-XDR Console Management [SentinelOne, TrendMicro, Sophos, Trellix ePO, Cynet, FortiClient EMS]
+- Vulnerability Assessment [Qualys, Rapid7, Nessus]
+- Web Application Security Testing [Qualys, Rapid7]
 - Active Directory Hardening
 - Cloud Security Posture Evaluation
 - Threat Intelligence (OSINT)
 - Ethical phishing campaigns
+- Antispam Management
+- CyberGuru
 - Internal scripting and automation`
             },
 
